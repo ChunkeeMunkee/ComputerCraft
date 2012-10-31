@@ -1,0 +1,34 @@
+-- File transfer fidelity test program SERVER
+
+side = "back"
+filename = "Testpage"
+
+function prompt()
+print("Do you want to *send*, *read* or *reboot*?")
+command = io.read()
+
+if command == "reboot" then
+  os.reboot()
+  end
+if command == "send" then
+  print("Enter the ID of the recieving computer: ")
+  recID = io.read()
+  recID = tonumber(recID)
+  sleep(5)
+  rednet.open(side)
+  text = io.open(filename, "r")
+  msg = ((fs.getSize(filename)).."|"..text.read("*a"))
+  rednet.send(recID, msg)
+  print("Sending the following message to computer ID " ..recID.. ":")
+  print(msg)
+  prompt()
+  end
+if command == "read" then
+  text = io.open(filename, "r")
+  msg = text.read("a")
+  print(msg)
+  prompt()
+  end
+end
+
+prompt()

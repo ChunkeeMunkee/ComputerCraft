@@ -1,0 +1,20 @@
+-- Comms relay program
+
+-- Establish sides for I/O
+print("Which side for data?")
+dataSide = read()
+print("Which side for OUTPUT?")
+outputSide = read()
+print("Which side for INPUT?")
+inputSide = read()
+
+rednet.open(dataSide)
+rednet.open(inputSide)
+rednet.open(outputSide)
+
+while true do
+  rs.setBundledOutput(outputSide, (rs.getBundledInput(dataSide)))
+  rs.setBundledOutput(dataSide, (rs.getBundledInput(inputSide)))
+  sleep(0.1)
+  end
+  

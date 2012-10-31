@@ -1,0 +1,45 @@
+-- File transfer fidelity test program CLIENT
+
+side = "back"
+filename = "Testpage"
+
+function prompt()
+print("Do you want to *receive*, *read* or *reboot*?")
+command = io.read()
+
+if command == "reboot" then
+  os.reboot()
+  end
+if command == "receive" then -- Make a receive function, leave reqResend as a nested function to preserve sender ID variable!
+  rednet.open(side)
+  local senderId, msg, dist = rednet.receive()
+  if string.find(msg, "|") == nil then
+    reqResend()
+	end
+  local index = string.sub((string.find(msg, "|")),1,1)
+  local msgSize = string.sub(msg,1,(index-1))
+  local text = string.sub(msg,(index+1))
+  local file = io.open(filename, "w")
+  file:write(text)
+  file:close()
+  print("Received and written the following message from ID " ..senderId.. ":")
+  print(text)
+  print("Received filesize: "..msgSize.."B")
+  print("Actual filesize: "..fs.getSize(filename).."B")
+  rednet.close(side)
+  prompt()
+  end
+if command == "read" then
+  if fs.exists(filename) then
+    text = io.open(filename, "r")
+    msg = text.read("a")
+    print(msg)
+    prompt()
+    end
+  else
+    print("Nothing to open!")
+    prompt()
+  end
+end
+
+prompt()
